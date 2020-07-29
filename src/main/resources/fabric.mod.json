@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "portaltags",
   "version": "${version}",
 
-  "name": "Example Mod",
+  "name": "Portal Tags",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
     "Me!"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/CoolMineman/PortalTags",
+    "sources": "https://github.com/CoolMineman/PortalTags"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/portaltags/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "io.github.coolmineman.portaltags.PortalTags"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "portaltags.mixins.json"
   ],
 
   "depends": {
