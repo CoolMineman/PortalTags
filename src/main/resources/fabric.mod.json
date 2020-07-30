@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "io.github.coolmineman.portaltags.PortalTags"
+    ],
+    "client": [
+      "io.github.coolmineman.portaltags.PortalTagsClient"
     ]
   },
   "mixins": [

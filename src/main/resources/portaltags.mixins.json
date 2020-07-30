@@ -4,6 +4,7 @@
   "package": "io.github.coolmineman.portaltags.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinNetherPortalBlock"
   ],
   "client": [
     "ExampleMixin"
