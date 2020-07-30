@@ -15,6 +15,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
 
@@ -23,6 +24,10 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
 
     public NetherPortalBlockEntity() {
         super(PortalTags.PORTAL_BLOCK_ENTITY);
+    }
+
+    public String getName() {
+        return tagName;
     }
 
     public void setName(String name) {
@@ -73,10 +78,17 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
     }
 
     public void setAllNames(String name, Direction.Axis direction, BlockPos pos) {
+        BlockPos lowCorner = getLowCorner(direction, pos);
+        if (world.getRegistryKey() == World.OVERWORLD) {
+            NamedPortalManager.addOverworldPortal(name, lowCorner);
+        } else if (world.getRegistryKey() == World.NETHER) {
+            NamedPortalManager.addNetherPortal(name, lowCorner);
+        }
+        
         if (direction == Direction.Axis.X) {
-            startProbeX(name, getLowCorner(direction, pos));
+            startProbeX(name, lowCorner);
         } else {
-            startProbeZ(name, getLowCorner(direction, pos));
+            startProbeZ(name, lowCorner);
         }
     }
 
@@ -116,7 +128,7 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
     @Override
     public void fromClientTag(CompoundTag tag) {
         this.fromTag(null, tag);
-        System.out.println(tag.toString());
+        //System.out.println(tag.toString());
     }
 
     @Override

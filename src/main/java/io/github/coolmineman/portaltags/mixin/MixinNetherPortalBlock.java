@@ -17,7 +17,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 @Mixin(NetherPortalBlock.class)
-public class MixinNetherPortalBlock extends Block implements BlockEntityProvider{
+public class MixinNetherPortalBlock extends Block implements BlockEntityProvider {
 
     private MixinNetherPortalBlock(Settings settings) {
         super(settings);
