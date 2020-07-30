@@ -128,7 +128,6 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
     @Override
     public void fromClientTag(CompoundTag tag) {
         this.fromTag(null, tag);
-        //System.out.println(tag.toString());
     }
 
     @Override

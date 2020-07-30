@@ -14,6 +14,5 @@ public class PortalTags implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		PORTAL_BLOCK_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, "portaltags:portal_entity", BlockEntityType.Builder.create(NetherPortalBlockEntity::new, Blocks.NETHER_PORTAL).build(null));
-		System.out.println("Hello Fabric world!");
 	}
 }
