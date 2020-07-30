@@ -101,7 +101,8 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
             if (!world.isClient) {
                 setAllNames(itemStack.getName().asString(), state.get(NetherPortalBlock.AXIS), pos);
             }
-            return ActionResult.CONSUME;
+            itemStack.decrement(1);
+            return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
     }
