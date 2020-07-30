@@ -5,10 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinNetherPortalBlock",
-    "MixinLevelProperties"
-  ],
-  "client": [
-    "ExampleMixin"
+    "MixinLevelProperties",
+    "MixinEntity",
+    "MixinPortalForcer"
   ],
   "injectors": {
     "defaultRequire": 1
