@@ -4,21 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Map.Entry;
-import java.util.concurrent.ThreadLocalRandom;
-
-import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.LongArrayTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.PortalForcer;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 
 public class NamedPortalManager {
@@ -68,28 +63,18 @@ public class NamedPortalManager {
         return result;
     }
 
-    public static BlockPattern.TeleportTarget getPortal(BlockPos pos, Vec3d vec3d, Direction direction, double x, double y, boolean canActivate, Entity e, PortalForcer pf) {
-        BlockPos entityPos;
-        if (e instanceof PlayerEntity) {
-            if (e.getEntityWorld().getRegistryKey() == World.NETHER) {
-                entityPos = new BlockPos(e.getPos().multiply(1d/8, 1, 1d/8));
-            } else if (e.getEntityWorld().getRegistryKey() == World.OVERWORLD) {
-                entityPos = new BlockPos(e.getPos().multiply(8, 1, 8));
-            } else {
-                return pf.getPortal(pos, vec3d, direction, x, y, canActivate);
-            }
-        } else {
-            entityPos = new BlockPos(e.getPos());
-        }
-        BlockPattern.Result result = NetherPortalBlock.findPortal(e.getEntityWorld(), entityPos);
+    //TODO Maybe Unhardcode The Dimenions and use destination Somehow
+
+    public static Optional<TeleportTarget> getPortal(Entity e, ServerWorld destination) {
+        BlockPos a = e.getBlockPos();
         BlockPos[] blocksToCheck = {
-            result.getFrontTopLeft().add(0d, 0d, 0d),
-            result.getFrontTopLeft().add(0d, 0d, 1d),
-            result.getFrontTopLeft().add(0d, 0d, -1d),
-            result.getFrontTopLeft().add(0d, 1d, 0d),
-            result.getFrontTopLeft().add(0d, -1d, 0d),
-            result.getFrontTopLeft().add(1d, 0d, 0d),
-            result.getFrontTopLeft().add(-1d, 0d, 0d),
+            a.add(0d, 0d, 0d),
+            a.add(0d, 0d, 1d),
+            a.add(0d, 0d, -1d),
+            a.add(0d, 1d, 0d),
+            a.add(0d, -1d, 0d),
+            a.add(1d, 0d, 0d),
+            a.add(-1d, 0d, 0d),
         };
         for (BlockPos p : blocksToCheck) {
             BlockEntity be = e.getEntityWorld().getBlockEntity(p);
@@ -99,26 +84,26 @@ public class NamedPortalManager {
                     if (e.getEntityWorld().getRegistryKey() == World.NETHER) {
                         List<Long> owPortals = getOverWorldPortals(be1.getName());
                         if (owPortals.size() == 1) {
-                            return new BlockPattern.TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(owPortals.get(0))), e.getVelocity() , (int) e.getHeadYaw());
+                            return Optional.of(new TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(owPortals.get(0))), e.getVelocity(), e.getHeadYaw(), e.getPitch(0)));
                         }
                         if (!owPortals.isEmpty()) {
                             Collections.shuffle(owPortals);
-                            return new BlockPattern.TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(owPortals.get(/*ThreadLocalRandom.current().nextInt(1, owPortals.size()) - 1*/0))), e.getVelocity() , (int) e.getHeadYaw());
+                            return Optional.of(new TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(owPortals.get(0))), e.getVelocity(), e.getHeadYaw(), e.getPitch(0)));
                         }
                     } else if (e.getEntityWorld().getRegistryKey() == World.OVERWORLD) {
                         List<Long> nPortals = getNetherPortals(be1.getName());
                         if (nPortals.size() == 1) {
-                            return new BlockPattern.TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(nPortals.get(0))), e.getVelocity() , (int) e.getHeadYaw());
+                            return Optional.of(new TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(nPortals.get(0))), e.getVelocity(), e.getHeadYaw(), e.getPitch(0)));
                         }
                         if (!nPortals.isEmpty()) {
                             Collections.shuffle(nPortals);
-                            return new BlockPattern.TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(nPortals.get(/*ThreadLocalRandom.current().nextInt(1, nPortals.size()) - 1*/0))), e.getVelocity() , (int) e.getHeadYaw());
+                            return Optional.of(new TeleportTarget(Vec3d.ofCenter(BlockPos.fromLong(nPortals.get(0))), e.getVelocity(), e.getHeadYaw(), e.getPitch(0)));
                         }
                     }
                 }
             }
         }
-        return pf.getPortal(pos, vec3d, direction, x, y, canActivate);
+        return Optional.empty();
     }
 
     private static void putIfAbsent(ArrayList a, Object b) {

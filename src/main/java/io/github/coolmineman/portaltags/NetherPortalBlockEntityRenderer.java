@@ -2,7 +2,6 @@ package io.github.coolmineman.portaltags;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.NetherPortalBlock;
-import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -11,7 +10,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 
 public class NetherPortalBlockEntityRenderer extends BlockEntityRenderer<NetherPortalBlockEntity> {
@@ -23,16 +22,82 @@ public class NetherPortalBlockEntityRenderer extends BlockEntityRenderer<NetherP
     @Override
     public void render(NetherPortalBlockEntity entity, float tickDelta, MatrixStack matrices,
             VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        BlockPattern.Result r = NetherPortalBlock.findPortal(entity.getWorld(), entity.getPos());
-        if (entity.hasTag) {
-            if (r.getForwards().getAxis() == Direction.Axis.X) {
-                if ( !( r.getFrontTopLeft().getX() == (entity.getPos().getX()) && r.getFrontTopLeft().getY() == (entity.getPos().getY()) && r.getFrontTopLeft().getZ() == (entity.getPos().getZ() - r.getWidth() + 1) ) ) return; 
-                renderLabelIfPresent(entity, new LiteralText(entity.tagName), matrices, vertexConsumers, light, 0d, (r.getHeight() * -0.5d) + 0.5d, (r.getWidth() * -0.5d) + 0.5d);
-            } else {
-                if ( !( r.getFrontTopLeft().getZ() == (entity.getPos().getZ()) && r.getFrontTopLeft().getY() == (entity.getPos().getY()) && r.getFrontTopLeft().getX() == (entity.getPos().getX()) ) ) return; 
-                renderLabelIfPresent(entity, new LiteralText(entity.tagName), matrices, vertexConsumers, light, (r.getWidth() * -0.5d) + 0.5d, (r.getHeight() * -0.5d) + 0.5d, 0d);
+        if (!entity.hasTag) return;
+        BlockPos.Mutable b = new BlockPos.Mutable(entity.getPos().getX(), entity.getPos().getY(), entity.getPos().getZ());
+        while (true) {
+            b.move(0, 1, 0);
+            if (entity.getWorld().getBlockState(b).getBlock() != Blocks.NETHER_PORTAL) {
+                b.move(0, -1, 0);
+                break;
             }
         }
+
+        if (entity.getPos().getY() != b.getY()) {
+            return;
+        }
+
+        double xOffset = 0;
+        double yOffset = 0;
+        double zOffset = 0;
+
+        switch(entity.getWorld().getBlockState(b).get(NetherPortalBlock.AXIS)) {
+        case Z:
+            while (true) {
+                b.move(0, 0, 1);
+                if (entity.getWorld().getBlockState(b).getBlock() != Blocks.NETHER_PORTAL) {
+                    b.move(0, 0, -1);
+                    break;
+                }
+            }
+
+            if (entity.getPos().getZ() != b.getZ()) {
+                return;
+            }
+
+            while (true) {
+                b.move(0, 0, -1);
+                if (entity.getWorld().getBlockState(b).getBlock() == Blocks.NETHER_PORTAL) {
+                    zOffset += -0.5;
+                } else {
+                    b.move(0, 0, 1);
+                    break;
+                }
+            }
+
+            break;
+        case X:
+        default:
+            while (true) {
+                b.move(1, 0, 0);
+                if (entity.getWorld().getBlockState(b).getBlock() != Blocks.NETHER_PORTAL) {
+                    b.move(-1, 0, 0);
+                    break;
+                }
+            }
+
+            if (entity.getPos().getX() != b.getX()) {
+                return;
+            }
+
+            while (true) {
+                b.move(-1, 0, 0);
+                if (entity.getWorld().getBlockState(b).getBlock() == Blocks.NETHER_PORTAL) {
+                    xOffset += -0.5;
+                } else {
+                    b.move(1, 0, 0);
+                    break;
+                }
+            }
+        }
+        while (true) {
+            b.move(0, -1, 0);
+            if (entity.getWorld().getBlockState(b).getBlock() == Blocks.NETHER_PORTAL) {
+                yOffset += -0.5;
+            } else {
+                break;
+            }
+        }
+        renderLabelIfPresent(entity, new LiteralText(entity.tagName), matrices, vertexConsumers, light, xOffset, yOffset, zOffset);
     }
     
     protected void renderLabelIfPresent(NetherPortalBlockEntity entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, double x, double y, double z) {

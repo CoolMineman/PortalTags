@@ -6,8 +6,7 @@
   "mixins": [
     "MixinNetherPortalBlock",
     "MixinLevelProperties",
-    "MixinEntity",
-    "MixinPortalForcer"
+    "MixinEntity"
   ],
   "injectors": {
     "defaultRequire": 1
