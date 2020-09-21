@@ -107,6 +107,16 @@ public class NetherPortalBlockEntity extends BlockEntity implements BlockEntityC
     }
 
     @Override
+    public void markRemoved() {
+        if (world.getRegistryKey() == World.OVERWORLD) {
+            NamedPortalManager.removeOverworldPortal(this.tagName, this.pos);
+        } else if (world.getRegistryKey() == World.NETHER) {
+            NamedPortalManager.removeNetherPortal(this.tagName, this.pos);
+        }
+        super.markRemoved();
+    }
+
+    @Override
     public CompoundTag toTag(CompoundTag tag) {
         super.toTag(tag);
         tag.putBoolean("hasTag", hasTag);

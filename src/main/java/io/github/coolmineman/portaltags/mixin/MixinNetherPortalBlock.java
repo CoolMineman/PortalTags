@@ -2,6 +2,7 @@ package io.github.coolmineman.portaltags.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
+import io.github.coolmineman.portaltags.NamedPortalManager;
 import io.github.coolmineman.portaltags.NetherPortalBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -9,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -38,5 +40,4 @@ public class MixinNetherPortalBlock extends Block implements BlockEntityProvider
         }
         return super.onUse(state, world, pos, player, hand, hit);
     }
-    
 }
